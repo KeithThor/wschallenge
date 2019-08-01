@@ -1,7 +1,10 @@
-import fetcher from "./fetcher/fetcher.js";
+import fetcher from "./fetcher/fetcher.js"
+import displayBuilder from "./display-builder/display-builder.js";
 
-fetcher.fetchDataAsync().then((data) => {
-    let body = document.getElementById("content");
+(async () => {
+    let data = await fetcher.fetchDataAsync();
+    let display = await displayBuilder.build(data);
 
-    body.innerHTML = data;
-})
+    let root = document.getElementById("content");
+    root.appendChild(display);
+})();

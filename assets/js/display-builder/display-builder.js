@@ -1,9 +1,15 @@
-import fetcher from "../fetcher/fetcher.js";
 import componentFactory from "../component-factory/component-factory";
 
-const buildAsync = async () => {
-    let data = await fetcher.fetchDataAsync();
-    componentFactory.make();
+/**Builds the components for every piece of furniture in the provided json data. */
+const build = (data) => {
+    let fragment = document.createDocumentFragment();
+    let furnitureData = data.groups;
+
+    furnitureData.forEach(furniture => {
+        fragment.appendChild(componentFactory.make(furniture));
+    });
+
+    return fragment;
 };
 
 export default { build };
