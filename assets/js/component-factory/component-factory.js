@@ -1,13 +1,18 @@
 /**Makes a DocumentFragment that displays all of the required display elements for one provided furniture's data. */
 const make = (data) => {
     let componentRoot = document.createDocumentFragment();
-    componentRoot.classList = "product";
+
+    let componentContainer = document.createElement("div");
+    componentContainer.classList = "product";
     
-    componentRoot.appendChild(makeProductName(data));
-    componentRoot.appendChild(makeProductPrice(data.priceRange));
-    componentRoot.appendChild(makeProductHero(data.hero));
-    componentRoot.appendChild(makeReviews(data.reviews));
-    componentRoot.appendChild(makeMessages(data.messages));
+    componentContainer.appendChild(makeProductName(data));
+    componentContainer.appendChild(makeProductPrice(data.priceRange));
+    componentContainer.appendChild(makeProductHero(data.hero));
+    componentContainer.appendChild(makeReviews(data.reviews));
+    componentContainer.appendChild(makeMessages(data.messages));
+    componentContainer.appendChild(makeFlags(data.flags));
+
+    componentRoot.appendChild(componentContainer);
 
     return componentRoot;
 };
@@ -103,6 +108,59 @@ const makeMessages = (messages) => {
     });
 
     return messagesParent;
+};
+
+/**Constructs an element that contains all of the flags for a given furniture item. */
+const makeFlags = (flags) => {
+    let flagsParent = document.createElement("div");
+    flagsParent.classList = "product-flags";
+
+    flags.forEach(flag => {
+        if (flag.bopisSuppress) return;
+
+        switch(flag.id){
+            case "newcore":
+                flagsParent.appendChild(makeNewcoreFlag());
+                break;
+            case "organic":
+                flagsParent.appendChild(MakeOrganicFlag());
+                break;
+            case "fairTrade":
+                flagsParent.appendChild(makeFairTradeFlag());
+                break;
+            default:
+                break;
+        }
+    });
+
+    return flagsParent;
+};
+
+/**Constructs a 'New' flag component. */
+const makeNewcoreFlag = () => {
+    let flag = document.createElement("div");
+    flag.classList = "product-flag-newcore";
+    flag.innerText = "New";
+
+    return flag;
+}
+
+/**Constructs a 'Fair Trade' flag component. */
+const makeFairTradeFlag = () => {
+    let flag = document.createElement("div");
+    flag.classList = "product-flag-fairtrade";
+    flag.innerText = "Fair Trade";
+
+    return flag;
+}
+
+/**Constructs an 'Organic' flag component. */
+const MakeOrganicFlag = () => {
+    let flag = document.createElement("div");
+    flag.classList = "product-flag-organic";
+    flag.innerText = "Organic";
+
+    return flag;
 }
 
 export default { make };
