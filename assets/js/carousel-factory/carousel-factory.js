@@ -1,5 +1,5 @@
 /**Makes a carousel component for a single furniture item. */
-const make = (furnitureData) => {
+export const make = (furnitureData) => {
     let carouselRoot = document.createDocumentFragment();
 
     let overlay = document.createElement("div");
@@ -44,7 +44,7 @@ const make = (furnitureData) => {
 };
 
 /**Makes an image element for the selected image view. */
-const makeMainView = (imageData) => {
+export const makeMainView = (imageData) => {
     let viewContainer = document.createElement("div");
     viewContainer.classList = "product-carousel-view";
 
@@ -58,7 +58,7 @@ const makeMainView = (imageData) => {
 }
 
 /**Makes a thumbnail element for a single provided image data. */
-const makeThumbnail = (imageData) => {
+export const makeThumbnail = (imageData) => {
     let thumbnailContainer = document.createElement("div");
     thumbnailContainer.classList = "product-carousel-thumbnail";
 

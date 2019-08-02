@@ -1,5 +1,7 @@
+import carouselFactory from "../carousel-factory/carousel-factory";
+
 /**Makes a DocumentFragment that displays all of the required display elements for one provided furniture's data. */
-const make = (data) => {
+export const make = (data) => {
     let componentRoot = document.createDocumentFragment();
 
     let componentContainer = document.createElement("div");
@@ -7,7 +9,7 @@ const make = (data) => {
     
     componentContainer.appendChild(makeProductName(data));
     componentContainer.appendChild(makeProductPrice(data.priceRange));
-    componentContainer.appendChild(makeProductHero(data.hero));
+    componentContainer.appendChild(makeProductHero(data));
     componentContainer.appendChild(makeReviews(data.reviews));
     componentContainer.appendChild(makeMessages(data.messages));
     componentContainer.appendChild(makeFlags(data.flags));
@@ -18,7 +20,7 @@ const make = (data) => {
 };
 
 /**Constructs a name element for a product for the product's JSON data. */
-const makeProductName = (data) => {
+export const makeProductName = (data) => {
     let nameElement = document.createElement("div");
     nameElement.classList = "product-name";
 
@@ -33,7 +35,7 @@ const makeProductName = (data) => {
 };
 
 /**Constructs a product price element for a product using the product's JSON data. */
-const makeProductPrice = (priceRange) => {
+export const makeProductPrice = (priceRange) => {
     let priceElement = document.createElement("div");
     priceElement.classList = "product-price";
     priceElement.innerText = `$${priceRange.selling.low} - $${priceRange.selling.high}`;
@@ -42,23 +44,41 @@ const makeProductPrice = (priceRange) => {
 };
 
 /**Constructs a product hero image element for a product using the product's JSON data. */
-const makeProductHero = (hero) => {
+export const makeProductHero = (furniture) => {
     let heroParent = document.createElement("div");
     heroParent.classList = "product-hero";
 
     let heroImg = document.createElement("img");
-    heroImg.src = hero.href;
-    heroImg.alt = hero.alt;
+    heroImg.src = furniture.hero.href;
+    heroImg.alt = furniture.hero.alt;
 
     heroParent.appendChild(heroImg);
+
+    // Adds a click event listener to construct the carousel component using the current furniture's data.
+    heroParent.addEventListener("click", () => {
+        let carouselFragment;
+        try {
+            carouselFragment = carouselFactory.make(furniture);
+        }
+        catch (err) {
+            if (err instanceof TypeError) {
+                return;
+            }
+            else throw err;
+        }
+
+        let carouselElement = document.getElementById("carousel");
+        carouselElement.innerHTML = "";
+        carouselElement.appendChild(carouselFragment);
+    });
 
     return heroParent;
 };
 
 /**Constructs a reviews element with recommendations, reviews counts, and ratings. */
-const makeReviews = (reviews) => {
+export const makeReviews = (reviews) => {
     let reviewParent = document.createElement("div");
-    reviewParent.classList = "product-review";
+    reviewParent.classList = "product-reviews";
 
     reviewParent.appendChild(makeRecommendations(reviews));
     reviewParent.appendChild(makeReviewsCount(reviews));
@@ -68,7 +88,7 @@ const makeReviews = (reviews) => {
 };
 
 /**Constructs a recommendations element with the provided reviews data. */
-const makeRecommendations = (reviews) => {
+export const makeRecommendations = (reviews) => {
     let recommendations = document.createElement("div");
     recommendations.innerText = `Recommendations: ${reviews.recommendationCount}`;
     recommendations.classList = "product-recommendations";
@@ -77,25 +97,25 @@ const makeRecommendations = (reviews) => {
 }
 
 /**Constructs a reviews count element with the provided reviews data. */
-const makeReviewsCount = (reviews) => {
+export const makeReviewsCount = (reviews) => {
     let reviewsCount = document.createElement("div");
     reviewsCount.innerText = `Reviews: ${reviews.reviewCount}`;
-    reviewsCount.classList = "product-review-count";
+    reviewsCount.classList = "product-reviews-count";
 
     return reviewsCount;
 }
 
 /**Constructs a ratings element with the provided reviews data. */
-const makeRatings = (reviews) => {
+export const makeRatings = (reviews) => {
     let ratings = document.createElement("div");
     ratings.innerText = `Average Rating: ${reviews.averageRating}`;
-    ratings.classList = "product-rating";
+    ratings.classList = "product-ratings";
 
     return ratings;
 }
 
 /**Constructs a messages element from the provided array of string messages. */
-const makeMessages = (messages) => {
+export const makeMessages = (messages) => {
     let messagesParent = document.createElement("div");
     messagesParent.classList = "product-messages";
 
@@ -111,7 +131,7 @@ const makeMessages = (messages) => {
 };
 
 /**Constructs an element that contains all of the flags for a given furniture item. */
-const makeFlags = (flags) => {
+export const makeFlags = (flags) => {
     let flagsParent = document.createElement("div");
     flagsParent.classList = "product-flags";
 
@@ -137,7 +157,7 @@ const makeFlags = (flags) => {
 };
 
 /**Constructs a 'New' flag component. */
-const makeNewcoreFlag = () => {
+export const makeNewcoreFlag = () => {
     let flag = document.createElement("div");
     flag.classList = "product-flag-newcore";
     flag.innerText = "New";
@@ -146,7 +166,7 @@ const makeNewcoreFlag = () => {
 }
 
 /**Constructs a 'Fair Trade' flag component. */
-const makeFairTradeFlag = () => {
+export const makeFairTradeFlag = () => {
     let flag = document.createElement("div");
     flag.classList = "product-flag-fairtrade";
     flag.innerText = "Fair Trade";
@@ -155,7 +175,7 @@ const makeFairTradeFlag = () => {
 }
 
 /**Constructs an 'Organic' flag component. */
-const MakeOrganicFlag = () => {
+export const MakeOrganicFlag = () => {
     let flag = document.createElement("div");
     flag.classList = "product-flag-organic";
     flag.innerText = "Organic";
