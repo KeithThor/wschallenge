@@ -7,17 +7,31 @@ export const make = (data) => {
     let componentContainer = document.createElement("div");
     componentContainer.classList = "product";
     
-    componentContainer.appendChild(makeProductName(data));
-    componentContainer.appendChild(makeProductPrice(data.priceRange));
+    componentContainer.appendChild(makeCompoundName(data));
     componentContainer.appendChild(makeProductHero(data));
-    componentContainer.appendChild(makeReviews(data.reviews));
     componentContainer.appendChild(makeMessages(data.messages));
-    componentContainer.appendChild(makeFlags(data.flags));
+    componentContainer.appendChild(makeReviews(data.reviews));
+    //componentContainer.appendChild(makeFlags(data.flags));
 
     componentRoot.appendChild(componentContainer);
 
     return componentRoot;
 };
+
+/**Constructs a compound name element that contains flag elements within the product name element. */
+export const makeCompoundName = (data) => {
+    let productName = makeProductName(data);
+
+    let newCore = data.flags.find(flag => flag.id === "newcore");
+    if (newCore != null){
+        productName.insertBefore(makeNewcoreFlag(), productName.firstChild);
+    }
+
+    let otherFlags = data.flags.filter(flag => flag.id !== "newcore");
+    productName.appendChild(makeFlags(otherFlags));
+
+    return productName;
+}
 
 /**Constructs a name element for a product for the product's JSON data. */
 export const makeProductName = (data) => {
@@ -31,6 +45,8 @@ export const makeProductName = (data) => {
 
     nameElement.appendChild(nameLink);
 
+    nameElement.appendChild(makeProductPrice(data.priceRange));
+
     return nameElement;
 };
 
@@ -38,7 +54,7 @@ export const makeProductName = (data) => {
 export const makeProductPrice = (priceRange) => {
     let priceElement = document.createElement("div");
     priceElement.classList = "product-price";
-    priceElement.innerText = `$${priceRange.selling.low} - $${priceRange.selling.high}`;
+    priceElement.innerText = ` $${priceRange.selling.low} - $${priceRange.selling.high}`;
 
     return priceElement;
 };
@@ -51,6 +67,7 @@ export const makeProductHero = (furniture) => {
     let heroImg = document.createElement("img");
     heroImg.src = furniture.hero.href;
     heroImg.alt = furniture.hero.alt;
+    heroImg.title = "Click to see more pictures.";
 
     heroParent.appendChild(heroImg);
 
@@ -108,8 +125,21 @@ export const makeReviewsCount = (reviews) => {
 /**Constructs a ratings element with the provided reviews data. */
 export const makeRatings = (reviews) => {
     let ratings = document.createElement("div");
-    ratings.innerText = `Average Rating: ${reviews.averageRating}`;
+    ratings.innerText = `Average Rating: `;
     ratings.classList = "product-ratings";
+
+    let ratingsStars = document.createElement("span");
+    ratingsStars.classList = "product-ratings-stars";
+
+    for(let i = 1; i <= 5; i++) {
+        if (i <= reviews.averageRating){
+            ratingsStars.innerHTML += "&#9733"
+        }
+        else {
+            ratingsStars.innerHTML += "&#9734"
+        }
+    }
+    ratings.appendChild(ratingsStars);
 
     return ratings;
 }
@@ -139,9 +169,6 @@ export const makeFlags = (flags) => {
         if (flag.bopisSuppress) return;
 
         switch(flag.id){
-            case "newcore":
-                flagsParent.appendChild(makeNewcoreFlag());
-                break;
             case "organic":
                 flagsParent.appendChild(MakeOrganicFlag());
                 break;
@@ -159,8 +186,9 @@ export const makeFlags = (flags) => {
 /**Constructs a 'New' flag component. */
 export const makeNewcoreFlag = () => {
     let flag = document.createElement("div");
-    flag.classList = "product-flag-newcore";
+    flag.classList = "product-flag product-flag-newcore";
     flag.innerText = "New";
+    flag.title = "This is a brand new furniture piece!";
 
     return flag;
 }
@@ -168,8 +196,14 @@ export const makeNewcoreFlag = () => {
 /**Constructs a 'Fair Trade' flag component. */
 export const makeFairTradeFlag = () => {
     let flag = document.createElement("div");
-    flag.classList = "product-flag-fairtrade";
-    flag.innerText = "Fair Trade";
+    flag.classList = "product-flag product-flag-fairtrade";
+
+    let img = document.createElement("img");
+    img.src = "dist/icons8-work-26.png";
+    img.alt = "Fair trade item";
+    img.title = "Made in a Fair Trade Certified facility, directly benefiting the workers who make it.";
+
+    flag.appendChild(img);
 
     return flag;
 }
@@ -177,8 +211,14 @@ export const makeFairTradeFlag = () => {
 /**Constructs an 'Organic' flag component. */
 export const MakeOrganicFlag = () => {
     let flag = document.createElement("div");
-    flag.classList = "product-flag-organic";
-    flag.innerText = "Organic";
+    flag.classList = "product-flag product-flag-organic";
+
+    let img = document.createElement("img");
+    img.src = "dist/icons8-leaf-24.png";
+    img.alt = "Organic item";
+    img.title = "Certified to the Organic Content Standard (OCS).";
+
+    flag.appendChild(img);
 
     return flag;
 }

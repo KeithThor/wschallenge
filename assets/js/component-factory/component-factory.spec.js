@@ -1,4 +1,4 @@
-import componentFactory, { makeProductName, makeProductPrice, makeProductHero, makeReviews, makeFlags } from "./component-factory";
+import componentFactory, { makeProductName, makeProductPrice, makeProductHero, makeReviews, makeFlags, makeCompoundName } from "./component-factory";
 
 describe("make from component-factory", () => {
     let validData = {};
@@ -42,7 +42,7 @@ describe("make from component-factory", () => {
             flags: [{
                 bopisSuppress: false,
                 rank: 1,
-                id: "id"
+                id: "newcore"
             }],
             reviews: {
                 recommendationCount: 0,
@@ -91,7 +91,13 @@ describe("makeName from component-factory", () => {
     beforeEach(() => {
         validData = { 
             name: "name",
-            links: { www: "https://a-link-to-furniture.com/id/5123123" }
+            links: { www: "https://a-link-to-furniture.com/id/5123123" },
+            priceRange: {
+                selling: {
+                    high: 100,
+                    low: 1
+                }
+            }
         };
     });
 
@@ -256,20 +262,6 @@ describe("makeFlags in component-factory", () => {
         expect(makeFlags).toThrowError(TypeError);
     });
 
-    it("should return a component with newcore flag.", () => {
-        validData = [{
-            bopisSuppress: false,
-            rank: 1,
-            id: "newcore"
-        }];
-
-        let component = makeFlags(validData);
-        let newCore = component.querySelector(".product-flags .product-flag-newcore");
-
-        expect(component.children.length).toBe(1);
-        expect(newCore).not.toBeNull();
-    });
-
     it("should return a component with organic flag.", () => {
         let component = makeFlags(validData);
         let organic = component.querySelector(".product-flags .product-flag-organic");
@@ -313,5 +305,62 @@ describe("makeFlags in component-factory", () => {
         expect(component.children.length).toBe(2);
         expect(fairTrade).not.toBeNull();
         expect(organic).not.toBeNull();
+    });
+});
+
+describe("makeCompoundName in component-factory", () => {
+    let validData = {};
+
+    // Reset valid data object
+    beforeEach(() => {
+        validData = {
+            id: "id",
+            name: "name",
+            links: { www: "www" },
+            priceRange: { selling: { high: 2, low: 1 } },
+            messages: ["Mesage"],
+            flags: [{
+                bopisSuppress: false,
+                rank: 1,
+                id: "newcore"
+            }]
+        }
+    });
+
+    it("should return not null when provided valid data.", () => {
+        let component = makeCompoundName(validData);
+
+        expect(component).not.toBeNull();
+    });
+
+    it("should throw TypeError when provided no data.", () => {
+        expect(makeCompoundName).toThrowError(TypeError);
+    });
+
+    it("should contain a name component when provided valid data.", () => {
+        let component = makeCompoundName(validData);
+
+        expect(component.classList).toContain("product-name");
+    });
+
+    it("should contain a flag component when provided valid data with a flag provided.", () => {
+        let component = makeCompoundName(validData);
+        let name = component.querySelector(".product-flag");
+        expect(name).not.toBeNull();
+    });
+
+    it("should contain a price component when provided valid data.", () => {
+        let component = makeCompoundName(validData);
+        let name = component.querySelector(".product-price");
+        expect(name).not.toBeNull();
+    });
+
+    it("should create a component with no flags when provided valid data and no flags.", () => {
+        validData.flags = [];
+        let component = makeCompoundName(validData);
+        let flag = component.querySelector(".product-flag");
+
+        expect(component).not.toBeNull();
+        expect(flag).toBeNull();
     });
 });

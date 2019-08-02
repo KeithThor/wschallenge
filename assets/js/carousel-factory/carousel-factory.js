@@ -19,29 +19,38 @@ export const make = (furnitureData) => {
     let mainView = makeMainView(furnitureData.hero);
     carouselContainer.appendChild(mainView);
 
+    let thumbnails = [];
     // Thumbnail for hero image not included in list of images
     let heroThumb = makeThumbnail(furnitureData.thumbnail);
+    heroThumb.classList.add("product-carousel-active")
+    thumbnails.push(heroThumb);
 
     // On click, change main view image to that of the clicked thumbnail image
-    heroThumb.addEventListener("click", (event) => {
-        mainView.children[0].src = heroThumb.children[0].src;
-        mainView.children[0].alt = heroThumb.children[0].alt;
-        event.stopPropagation();
-    });
+    heroThumb.addEventListener("click", createSwapViewFunc(mainView, heroThumb, thumbnails));
     thumbnailContainer.appendChild(heroThumb);
 
     furnitureData.images.forEach(image => {
         let thumbnail = makeThumbnail(image);
-        thumbnail.addEventListener("click", () => {
-            mainView.children[0].src = thumbnail.children[0].src;
-            mainView.children[0].alt = thumbnail.children[0].alt;
-            event.stopPropagation();
-        });
+        thumbnail.addEventListener("click", createSwapViewFunc(mainView, thumbnail, thumbnails));
+        thumbnails.push(thumbnail);
         thumbnailContainer.appendChild(thumbnail);
     });
 
     return carouselRoot;
 };
+
+/**Creates a function that will swap the main view image with the thumbnail image. */
+export const createSwapViewFunc = (mainView, swap, allThumbnails) => {
+    return (event) => {
+        event.stopPropagation();
+        mainView.children[0].src = swap.children[0].src;
+        mainView.children[0].alt = swap.children[0].alt;
+        allThumbnails.forEach(thumbnail => {
+            thumbnail.classList.remove("product-carousel-active");
+        });
+        swap.classList.add("product-carousel-active");
+    };
+}
 
 /**Makes an image element for the selected image view. */
 export const makeMainView = (imageData) => {
@@ -53,6 +62,9 @@ export const makeMainView = (imageData) => {
     viewImage.alt = imageData.alt;
 
     viewContainer.appendChild(viewImage);
+    viewContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+    });
 
     return viewContainer;
 }

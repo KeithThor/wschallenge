@@ -1,4 +1,4 @@
-import carouselFactory, { makeMainView, makeThumbnail } from "./carousel-factory";
+import carouselFactory, { makeMainView, makeThumbnail, createSwapViewFunc } from "./carousel-factory";
 
 describe("make in carousel-factory", () => {
     let validData = {};
@@ -177,5 +177,50 @@ describe("makeThumbnail in carousel-factory", () => {
         let image = component.querySelector(".product-carousel-thumbnail img");
 
         expect(image.src).toBe("https://b-sample-imager/images/1231232.jpg");
+    });
+});
+
+describe("createSwapViewFunc in carousel-factory", () => {
+    let viewElement;
+    let myElement;
+    let allElements;
+    let fakeEvent;
+
+    beforeEach(() => {
+        viewElement = document.createElement("div");
+        let viewImg = document.createElement("img");
+        viewImg.src = "viewElements src";
+        viewElement.appendChild(viewImg);
+
+        myElement = document.createElement("div");
+        let myImg = document.createElement("img");
+        myImg.src = "myElements src";
+        myElement.appendChild(myImg);
+
+        allElements = [];
+        for(let i = 0; i < 5; i++){
+            let mockElement = document.createElement("div");
+            let mockImg = document.createElement("img");
+            mockImg.src = "mocks src";
+            mockElement.appendChild(mockImg);
+            allElements.push(mockElement);
+        }
+        allElements.push(myElement);
+
+        fakeEvent = {
+            stopPropagation: () => console.log()
+        }
+    });
+
+    it("should return a function", () => {
+        let func = createSwapViewFunc();
+
+        expect(typeof func).toBe("function");
+    });
+
+    it("should swap the src value of one element with another when the return function is called.", () => {
+        createSwapViewFunc(viewElement, myElement, allElements)(fakeEvent);
+
+        expect(viewElement.children[0].src).toBe(myElement.children[0].src);
     });
 });
