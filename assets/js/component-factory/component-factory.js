@@ -11,7 +11,6 @@ export const make = (data) => {
     componentContainer.appendChild(makeProductHero(data));
     componentContainer.appendChild(makeMessages(data.messages));
     componentContainer.appendChild(makeReviews(data.reviews));
-    //componentContainer.appendChild(makeFlags(data.flags));
 
     componentRoot.appendChild(componentContainer);
 
@@ -40,7 +39,6 @@ export const makeProductName = (data) => {
 
     let nameLink = document.createElement("a");
     nameLink.href = data.links.www;
-    nameLink.target = "_blank";
     nameLink.innerHTML = data.name;
 
     nameElement.appendChild(nameLink);
@@ -66,13 +64,20 @@ export const makeProductHero = (furniture) => {
 
     let heroImg = document.createElement("img");
     heroImg.src = furniture.hero.href;
-    heroImg.alt = furniture.hero.alt;
+    heroImg.alt = furniture.hero.alt + "(Click to see more pictures)";
     heroImg.title = "Click to see more pictures.";
 
     heroParent.appendChild(heroImg);
 
     // Adds a click event listener to construct the carousel component using the current furniture's data.
-    heroParent.addEventListener("click", () => {
+    heroParent.addEventListener("click", createHeroClickFunc(furniture));
+
+    return heroParent;
+};
+
+/**Creates a function to handle click events for clicking on a Hero Img. */
+export const createHeroClickFunc = (furniture) => {
+    return (event) => {
         let carouselFragment;
         try {
             carouselFragment = carouselFactory.make(furniture);
@@ -86,11 +91,17 @@ export const makeProductHero = (furniture) => {
 
         let carouselElement = document.getElementById("carousel");
         carouselElement.innerHTML = "";
+        carouselElement.setAttribute("aria-disabled", false);
         carouselElement.appendChild(carouselFragment);
-    });
+        
+        // Place focus on first thumbnail in the thumbnail container
+        let thumbnailContainer = carouselElement.querySelector(".product-thumbnail-container");
+        thumbnailContainer.children[0].focus();
 
-    return heroParent;
-};
+        let contentElement = document.getElementById("content");
+        contentElement.setAttribute("aria-disabled", true);
+    };
+}
 
 /**Constructs a reviews element with recommendations, reviews counts, and ratings. */
 export const makeReviews = (reviews) => {
@@ -200,8 +211,8 @@ export const makeFairTradeFlag = () => {
 
     let img = document.createElement("img");
     img.src = "dist/icons8-work-26.png";
-    img.alt = "Fair trade item";
-    img.title = "Made in a Fair Trade Certified facility, directly benefiting the workers who make it.";
+    img.alt = "This item was made in a Fair Trade Certified facility, directly benefiting the workers who make it.";
+    img.title = "This item was made in a Fair Trade Certified facility, directly benefiting the workers who make it.";
 
     flag.appendChild(img);
 
@@ -215,8 +226,8 @@ export const MakeOrganicFlag = () => {
 
     let img = document.createElement("img");
     img.src = "dist/icons8-leaf-24.png";
-    img.alt = "Organic item";
-    img.title = "Certified to the Organic Content Standard (OCS).";
+    img.alt = "This item is Certified to the Organic Content Standard (OCS).";
+    img.title = "This item is Certified to the Organic Content Standard (OCS).";
 
     flag.appendChild(img);
 
