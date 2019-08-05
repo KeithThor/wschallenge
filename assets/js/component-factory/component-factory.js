@@ -8,8 +8,8 @@ export const make = (data) => {
     componentContainer.classList = "product";
     
     componentContainer.appendChild(makeCompoundName(data));
-    componentContainer.appendChild(makeProductHero(data));
     componentContainer.appendChild(makeMessages(data.messages));
+    componentContainer.appendChild(makeProductHero(data));
     componentContainer.appendChild(makeReviews(data.reviews));
 
     componentRoot.appendChild(componentContainer);
@@ -25,6 +25,8 @@ export const makeCompoundName = (data) => {
     if (newCore != null){
         productName.insertBefore(makeNewcoreFlag(), productName.firstChild);
     }
+    
+    productName.appendChild(makeProductPrice(data.priceRange));
 
     let otherFlags = data.flags.filter(flag => flag.id !== "newcore");
     productName.appendChild(makeFlags(otherFlags));
@@ -42,8 +44,6 @@ export const makeProductName = (data) => {
     nameLink.innerHTML = data.name;
 
     nameElement.appendChild(nameLink);
-
-    nameElement.appendChild(makeProductPrice(data.priceRange));
 
     return nameElement;
 };
@@ -141,13 +141,14 @@ export const makeRatings = (reviews) => {
 
     let ratingsStars = document.createElement("span");
     ratingsStars.classList = "product-ratings-stars";
+    ratingsStars.setAttribute("aria-label", `${reviews.averageRating} out of 5 stars.`);
 
     for(let i = 1; i <= 5; i++) {
         if (i <= reviews.averageRating){
-            ratingsStars.innerHTML += "&#9733"
+            ratingsStars.innerHTML += "&#9733";
         }
         else {
-            ratingsStars.innerHTML += "&#9734"
+            ratingsStars.innerHTML += "&#9734";
         }
     }
     ratings.appendChild(ratingsStars);
