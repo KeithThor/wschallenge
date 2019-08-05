@@ -1,6 +1,6 @@
 # [Williams-Sonoma Challenge](https://keiththor.github.io/wschallenge/)
 
-This is an assignment to display a list of furniture items loaded from a json file.
+This is an assignment to display a list of furniture items loaded from a json file. The site is mobile-responsive and handicap-accessible.
 
 # About the Infrastructure
 
